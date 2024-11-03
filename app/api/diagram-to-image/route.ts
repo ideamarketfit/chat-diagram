@@ -4,9 +4,11 @@ import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
-    const { diagramDefinition, diagramTitle } = await req.json();
+    const url = new URL(req.url);
+    const diagramDefinition = url.searchParams.get('diagramDefinition');
+    const diagramTitle = url.searchParams.get('diagramTitle') || 'diagram';
 
     if (!diagramDefinition) {
       return NextResponse.json({ error: 'Diagram definition is required' }, { status: 400 });
@@ -30,13 +32,10 @@ export async function POST(req: NextRequest) {
     fs.unlinkSync(inputFilePath);
     fs.unlinkSync(outputFilePath);
 
-    // Use the provided diagram title or default to 'diagram'
-    const fileName = diagramTitle ? `${diagramTitle}.png` : 'diagram.png';
-
     return new NextResponse(imageBuffer, {
       headers: {
         'Content-Type': 'image/png',
-        'Content-Disposition': `attachment; filename="${fileName}"`,
+        'Content-Disposition': `attachment; filename="${diagramTitle}.png"`,
       },
     });
   } catch (error) {

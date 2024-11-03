@@ -19,15 +19,8 @@ const DiagramContainer = ({
 }: DiagramContainerProps) => {
   const handleExportDiagram = async () => {
     try {
-      const response = await fetch('/api/diagram-to-image', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          diagramDefinition,
-          diagramTitle: title,
-        }),
+      const response = await fetch(`/api/diagram-to-image?diagramDefinition=${encodeURIComponent(diagramDefinition)}&diagramTitle=${encodeURIComponent(title)}`, {
+        method: 'GET',
       });
 
       if (!response.ok) {
