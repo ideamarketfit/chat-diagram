@@ -1,47 +1,50 @@
 import React, { ReactNode } from 'react';
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Download, X } from 'lucide-react';
-import html2canvas from 'html2canvas';
 
 interface DiagramContainerProps {
   title: string;
   onClose: () => void;
   showBackButton?: boolean;
   children: ReactNode;
+  diagramDefinition: string;
 }
 
 const DiagramContainer = ({
   title,
   onClose,
   showBackButton = false,
-  children
+  children,
+  diagramDefinition
 }: DiagramContainerProps) => {
-  const handleExportDiagram = () => {
-    const element = document.getElementById('mermaid-diagram');
-    if (element) {
-      html2canvas(element, {
-        scale: 2,
-        backgroundColor: null,
-        logging: true,
-        onclone: (clonedDoc) => {
-          const clonedElement = clonedDoc.getElementById('mermaid-diagram');
-          if (clonedElement) {
-            clonedElement.style.width = '100%';
-            clonedElement.style.height = '100%';
-          }
-        }
-      }).then(canvas => {
-        const pngFile = canvas.toDataURL('image/png');
-        const downloadLink = document.createElement('a');
-        const fileName = `${title || 'diagram'}.png`;
-        downloadLink.download = fileName;
-        downloadLink.href = pngFile;
-        downloadLink.click();
-      }).catch(error => {
-        console.error('Error exporting diagram:', error);
+  const handleExportDiagram = async () => {
+    try {
+      const response = await fetch('/api/diagram-to-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          diagramDefinition,
+          diagramTitle: title,
+        }),
       });
-    } else {
-      console.error('Diagram element not found');
+
+      if (!response.ok) {
+        throw new Error('Failed to generate diagram');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const downloadLink = document.createElement('a');
+      downloadLink.href = url;
+      downloadLink.download = `${title || 'diagram'}.png`;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting diagram:', error);
     }
   };
 

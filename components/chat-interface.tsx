@@ -11,7 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import mermaid from 'mermaid';
 import svgPanZoom from 'svg-pan-zoom'
 import { useChat } from 'ai/react'
-import html2canvas from 'html2canvas';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getChat, getChatIds, getAllChats, saveMessage, getLastOpenedChatId, setLastOpenedChatId, createNewChat, updateChatTitle, getSidebarState, setSidebarState } from '@/lib/chat';
 import ChatSidebar from '@/components/chat-sidebar'
@@ -724,6 +723,7 @@ const ChatInterfaceComponent: React.FC = () => {
                   title={currentDiagram.title}
                   onClose={() => toggleDiagram(null)}
                   showBackButton={true}
+                  diagramDefinition={currentDiagram.content}
                 >
                   {currentDiagram.type === 'mermaid' && (
                     <div id="mermaid-diagram" className="w-full h-full flex items-center justify-center" />
