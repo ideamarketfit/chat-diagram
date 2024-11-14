@@ -5,6 +5,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 
 // Import the translations
 import common from '@/public/locales/en/common.json';
+import { EmbeddedFeedbackButton } from "@/components/makeform/emb-feedback-button";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -40,6 +41,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <div className="fixed bottom-0 right-0">
+          <EmbeddedFeedbackButton />
+        </div>
         <SpeedInsights />
       </body>
     </html>
