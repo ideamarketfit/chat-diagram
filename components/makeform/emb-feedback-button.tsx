@@ -1,6 +1,5 @@
 'use client'
 
-import { LifeBuoy } from 'lucide-react'
 import Script from 'next/script'
 
 const CONTAINER_ID = 'feedback-button-container'
